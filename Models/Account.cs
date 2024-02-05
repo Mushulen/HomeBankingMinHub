@@ -1,4 +1,6 @@
-﻿namespace HomeBankingMinHub.Models
+﻿using System.Collections.Generic;
+
+namespace HomeBankingMinHub.Models
 {
     public class Account
     {
@@ -8,5 +10,6 @@
         public double Balance { get; set; }
         public Client Client { get; set; }
         public long ClientId { get; set; }
+        public ICollection<Transactions> Transaction { get; set; }
     }
 }

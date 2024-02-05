@@ -1,4 +1,6 @@
-﻿namespace HomeBankingMinHub.Models
+﻿using HomeBankingMindHub.Models;
+
+namespace HomeBankingMinHub.Models
 {
     public class DbInitializer
     {
@@ -28,6 +30,26 @@
                     context.Account.AddRange(accounts);
                     context.SaveChanges();
 
+                }
+            }
+            if (!context.Transactions.Any())
+            {
+                var account1 = context.Account.FirstOrDefault(c => c.Number == "LEA001");
+                if (account1 != null)
+                {
+                    var transactions = new Transactions[]
+                    {
+                        new Transactions { AccountId= account1.Id, Amount = 10000, Date= DateTime.Now.AddHours(-5), Description = "Transferencia reccibida", Type = TransactionType.CREDIT.ToString() },
+
+                        new Transactions { AccountId= account1.Id, Amount = -2000, Date= DateTime.Now.AddHours(-6), Description = "Compra en tienda mercado libre", Type = TransactionType.DEBIT.ToString() },
+
+                        new Transactions { AccountId= account1.Id, Amount = -3000, Date= DateTime.Now.AddHours(-7), Description = "Compra en tienda xxxx", Type = TransactionType.DEBIT.ToString() },
+                    };
+                    foreach (Transactions transaction in transactions)
+                    {
+                        context.Transactions.Add(transaction);
+                    }
+                    context.SaveChanges();
                 }
             }
         }
