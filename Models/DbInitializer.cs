@@ -14,6 +14,22 @@
                 context.Clients.AddRange(clients);
                 context.SaveChanges();
             }
+
+            if (!context.Account.Any())
+            {
+                var accountLeandro = context.Clients.FirstOrDefault(c => c.Email == "lrodriguez@gmail.com");
+                if (accountLeandro != null)
+                {
+                    var accounts = new Account[]
+                    {
+                        new Account {ClientId = accountLeandro.Id, CreationDate = DateTime.Now, Number = string.Empty, Balance = 0 }
+                    };
+
+                    context.Account.AddRange(accounts);
+                    context.SaveChanges();
+
+                }
+            }
         }
     }
 }

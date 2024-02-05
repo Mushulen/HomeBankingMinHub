@@ -9,5 +9,6 @@ namespace HomeBankingMinHub.Models
         {
         }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Account> Account { get; set; }
     }
 }
