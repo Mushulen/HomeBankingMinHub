@@ -3,6 +3,7 @@ using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Controllers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using HomeBankingMinHub.Repositories.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("HomeBankingConex
 
 // Add Controllers
 builder.Services.AddControllers();
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();

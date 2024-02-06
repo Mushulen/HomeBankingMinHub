@@ -1,8 +1,10 @@
-﻿using HomeBankingMinHub.dtos;
+﻿
 using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Repositories;
+using HomeBankingMinHub.Models.DTO;
+using HomeBankingMinHub.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,9 +45,9 @@ namespace HomeBankingMinHub.Controllers
                         Accounts = client.Accounts.Select(ac => new AccountDTO
                         {
                             Id = ac.Id,
+                            Number = ac.Number,
                             Balance = ac.Balance,
                             CreationDate = ac.CreationDate,
-                            Number = ac.Number,
                         }).ToList()
                     };
 
@@ -61,6 +63,36 @@ namespace HomeBankingMinHub.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpPost]
+
+        public IActionResult Post([FromBody] NewClientDTO newClient)
+        {
+            try
+            {
+                if (newClient.FirstName.IsNullOrEmpty() || newClient.LastName.IsNullOrEmpty() || newClient.Email.IsNullOrEmpty())
+                {
+                    return BadRequest("Alguno de los datos ingresados es erróneo, intentelo nuevamente.");
+                }
+
+                var newclient = new Client
+                {
+                    FirstName = newClient.FirstName,
+                    LastName = newClient.LastName,
+                    Email = newClient.Email,
+                };
+
+                _clientRepository.Save(newclient);
+
+                return CreatedAtAction(nameof(Get), new { id = newclient.Id }, newclient);
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
         }
 
         [HttpGet("{id}")]
@@ -85,9 +117,9 @@ namespace HomeBankingMinHub.Controllers
                     Accounts = client.Accounts.Select(ac => new AccountDTO
                     {
                         Id = ac.Id,
+                        Number = ac.Number,
                         Balance = ac.Balance,
                         CreationDate = ac.CreationDate,
-                        Number = ac.Number
                     }).ToList()
                 };
 

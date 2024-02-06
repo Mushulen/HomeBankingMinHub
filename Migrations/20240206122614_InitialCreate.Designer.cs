@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeBankingMinHub.Migrations
 {
     [DbContext(typeof(HomeBankingContext))]
-    [Migration("20240205165737_addTransactionEntity")]
-    partial class addTransactionEntity
+    [Migration("20240206122614_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,10 +91,13 @@ namespace HomeBankingMinHub.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<DateOnly>("DateTime")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -117,13 +120,11 @@ namespace HomeBankingMinHub.Migrations
 
             modelBuilder.Entity("HomeBankingMinHub.Models.Transactions", b =>
                 {
-                    b.HasOne("HomeBankingMinHub.Models.Account", "Account")
+                    b.HasOne("HomeBankingMinHub.Models.Account", null)
                         .WithMany("Transaction")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("HomeBankingMinHub.Models.Account", b =>

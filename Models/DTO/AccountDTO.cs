@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace HomeBankingMinHub.dtos
+namespace HomeBankingMinHub.Models.DTO
 
 {
     public class AccountDTO

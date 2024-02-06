@@ -1,4 +1,6 @@
 ﻿using HomeBankingMindHub.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace HomeBankingMinHub.Models
 {
@@ -10,13 +12,15 @@ namespace HomeBankingMinHub.Models
             {
                 var clients = new Client[]
                 {
-                    new Client {FirstName="Leandro", LastName="Rodriguez", Email = "lrodriguez@gmail.com", Password="qwerty"}
-                };
+                    new Client {FirstName="Leandro", LastName="Rodriguez", Email = "lrodriguez@gmail.com", Password="qwerty"},
 
+                    new Client {FirstName="Lautaro", LastName="Lucci", Email = "llucci@gmail.com", Password="asdfg"},
+
+                    new Client {FirstName="Gimena", LastName="Dali", Email = "gdali@gmail.com", Password="qzxcvb"}
+                };
                 context.Clients.AddRange(clients);
                 context.SaveChanges();
             }
-
             if (!context.Account.Any())
             {
                 var accountLeandro = context.Clients.FirstOrDefault(c => c.Email == "lrodriguez@gmail.com");
@@ -24,12 +28,14 @@ namespace HomeBankingMinHub.Models
                 {
                     var accounts = new Account[]
                     {
-                        new Account {ClientId = accountLeandro.Id, CreationDate = DateTime.Now, Number = string.Empty, Balance = 0 }
-                    };
+                        new Account {ClientId = accountLeandro.Id, CreationDate = DateTime.Now, Number = "LEA001", Balance = 0 },
 
+                        new Account {ClientId = accountLeandro.Id, CreationDate = DateTime.Now, Number = "LEA002", Balance = 0 },
+
+                        new Account {ClientId = accountLeandro.Id, CreationDate = DateTime.Now, Number = "LEA003", Balance = 0 },
+                    };
                     context.Account.AddRange(accounts);
                     context.SaveChanges();
-
                 }
             }
             if (!context.Transactions.Any())
@@ -45,13 +51,20 @@ namespace HomeBankingMinHub.Models
 
                         new Transactions { AccountId= account1.Id, Amount = -3000, Date= DateTime.Now.AddHours(-7), Description = "Compra en tienda xxxx", Type = TransactionType.DEBIT.ToString() },
                     };
-                    foreach (Transactions transaction in transactions)
-                    {
-                        context.Transactions.Add(transaction);
-                    }
+                    context.Transactions.AddRange(transactions);
                     context.SaveChanges();
                 }
             }
+            ModifyAccBalance(context);
+        }
+        public static void ModifyAccBalance(HomeBankingContext context)
+        {
+            foreach (Transactions transactions in context.Transactions.ToList())
+            {
+                var account = context.Account.FirstOrDefault(c => c.Id == transactions.AccountId);
+                account.SetBalance(transactions.Amount);
+            }
+            context.SaveChanges();
         }
     }
 }

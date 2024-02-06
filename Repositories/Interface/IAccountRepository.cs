@@ -1,7 +1,7 @@
 ﻿using HomeBankingMinHub.Models;
 using System.Collections.Generic;
 
-namespace HomeBankingMinHub.Repositories
+namespace HomeBankingMinHub.Repositories.Interface
 {
     public interface IAccountRepository
     {

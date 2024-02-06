@@ -1,6 +1,6 @@
 ﻿using HomeBankingMinHub.Models;
 
-namespace HomeBankingMinHub.dtos
+namespace HomeBankingMinHub.Models.DTO
 {
     public class TransactionsDTO
     {

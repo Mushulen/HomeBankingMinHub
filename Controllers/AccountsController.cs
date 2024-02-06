@@ -1,8 +1,9 @@
-﻿using HomeBankingMinHub.dtos;
-using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Repositories;
+﻿using HomeBankingMinHub.Models;
+using HomeBankingMinHub.Models.DTO;
+using HomeBankingMinHub.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace HomeBankingMinHub.Controllers
         {
             _accountsRepository = accountsRepository;
         }
+
         [HttpGet]
 
         public IActionResult Get()
@@ -29,15 +31,23 @@ namespace HomeBankingMinHub.Controllers
 
                 foreach (Account account in accounts)
                 {
-                    var newaccountsDTO = new AccountDTO
+                    var newAccountsDTO = new AccountDTO
                     {
                         Id = account.Id,
                         Number = account.Number,
                         CreationDate = account.CreationDate,
                         Balance = account.Balance,
- 
+                        Transaction = account.Transaction.Select(tr => new TransactionsDTO
+                        {
+                            Id = tr.Id,
+                            Type = tr.Type,
+                            Amount = tr.Amount,
+                            Description = tr.Description,
+                            Date = tr.Date,
+                        }).ToList()
+
                     };
-                    accountsDTO.Add(newaccountsDTO);
+                    accountsDTO.Add(newAccountsDTO);
                 }
                 return Ok(accountsDTO);
             }
@@ -46,6 +56,8 @@ namespace HomeBankingMinHub.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
@@ -62,6 +74,14 @@ namespace HomeBankingMinHub.Controllers
                     Number = account.Number,
                     CreationDate = account.CreationDate,
                     Balance = account.Balance,
+                    Transaction = account.Transaction.Select(tr => new TransactionsDTO
+                    {
+                        Id = tr.Id,
+                        Type = tr.Type,
+                        Amount = tr.Amount,
+                        Description = tr.Description,
+                        Date = tr.Date,
+                    }).ToList()
                 };
                 return Ok(accountDTO);
             }

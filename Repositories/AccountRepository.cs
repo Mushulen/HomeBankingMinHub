@@ -1,4 +1,5 @@
 ﻿using HomeBankingMinHub.Models;
+using HomeBankingMinHub.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,14 @@ namespace HomeBankingMinHub.Repositories
         public Account FindById(long id)
         {
             return FindByCondition(account => account.Id == id)
-                .FirstOrDefault();
+                    .Include(account => account.Transaction)
+                    .FirstOrDefault();
         }
         public IEnumerable<Account> GetAllAccounts()
         {
             return FindAll()
-                   .ToList();
+                    .Include(account => account.Transaction)
+                    .ToList();
         }
         public void Save(Account account)
         {
