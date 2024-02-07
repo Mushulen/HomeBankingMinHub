@@ -14,14 +14,14 @@ namespace HomeBankingMinHub.Repositories
         public Account FindById(long id)
         {
             return FindByCondition(account => account.Id == id)
-                    .Include(account => account.Transaction)
-                    .FirstOrDefault();
+                   .Include(account => account.Transactions)
+                   .FirstOrDefault();
         }
         public IEnumerable<Account> GetAllAccounts()
         {
             return FindAll()
-                    .Include(account => account.Transaction)
-                    .ToList();
+                   .Include(account => account.Transactions)
+                   .ToList();
         }
         public void Save(Account account)
         {

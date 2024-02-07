@@ -37,7 +37,7 @@ namespace HomeBankingMinHub.Controllers
                         Number = account.Number,
                         CreationDate = account.CreationDate,
                         Balance = account.Balance,
-                        Transaction = account.Transaction.Select(tr => new TransactionsDTO
+                        Transactions = account.Transactions.Select(tr => new TransactionsDTO
                         {
                             Id = tr.Id,
                             Type = tr.Type,
@@ -74,7 +74,7 @@ namespace HomeBankingMinHub.Controllers
                     Number = account.Number,
                     CreationDate = account.CreationDate,
                     Balance = account.Balance,
-                    Transaction = account.Transaction.Select(tr => new TransactionsDTO
+                    Transactions = account.Transactions.Select(tr => new TransactionsDTO
                     {
                         Id = tr.Id,
                         Type = tr.Type,

@@ -1,6 +1,7 @@
 ﻿using HomeBankingMinHub.Models;
 using System.Collections.Generic;
 using System;
+using System.Text.Json.Serialization;
 
 namespace HomeBankingMinHub.Models.DTO
 
@@ -11,6 +12,6 @@ namespace HomeBankingMinHub.Models.DTO
         public string Number { get; set; }
         public DateTime CreationDate { get; set; }
         public double Balance { get; set; }
-        public ICollection<TransactionsDTO> Transaction { get; set; }
+        public ICollection<TransactionsDTO> Transactions { get; set; }
     }
 }

@@ -11,5 +11,7 @@ namespace HomeBankingMinHub.Models
         public DbSet<Client> Clients { get; set; }
         public DbSet<Account> Account { get; set; }
         public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<ClientLoan> ClientLoans { get; set; }
+        public DbSet<Loan> Loans { get; set; }
     }
 }

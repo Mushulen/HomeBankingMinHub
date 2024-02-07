@@ -55,13 +55,84 @@ namespace HomeBankingMinHub.Models
                     context.SaveChanges();
                 }
             }
+            if (!context.Loans.Any())
+            {
+                var loans = new Loan[]
+                {
+                    new Loan { Name = "Hipotecario", MaxAmount = 500000, Payments = "12,24,36,48,60" },
+                    new Loan { Name = "Personal", MaxAmount = 100000, Payments = "6,12,24" },
+                    new Loan { Name = "Automotriz", MaxAmount = 300000, Payments = "6,12,24,36" },
+                    new Loan { Name = "Prestario", MaxAmount = 250000, Payments = "6,12,24"},
+                    new Loan { Name = "Prendario", MaxAmount = 350000, Payments = "6,12,24,36"},
+                };
+                foreach (Loan loan in loans)
+                {
+                    context.Loans.Add(loan);
+                }
+                context.SaveChanges();
+                var client1 = context.Clients.FirstOrDefault(c => c.Email == "lrodriguez@gmail.com");
+                if (client1 != null)
+                {
+                    var loan1 = context.Loans.FirstOrDefault(l => l.Name == "Hipotecario");
+                    if (loan1 != null)
+                    {
+                        var clientLoan1 = new ClientLoan
+                        {
+                            Amount = 400000,
+                            ClientId = client1.Id,
+                            LoanId = loan1.Id,
+                            Payments = "60"
+                        };
+                        context.ClientLoans.Add(clientLoan1);
+                    }
+                    var loan2 = context.Loans.FirstOrDefault(l => l.Name == "Personal");
+                    if (loan2 != null)
+                    {
+                        var clientLoan2 = new ClientLoan
+                        {
+                            Amount = 50000,
+                            ClientId = client1.Id,
+                            LoanId = loan2.Id,
+                            Payments = "12"
+                        };
+                        context.ClientLoans.Add(clientLoan2);
+                    }
+                    var loan3 = context.Loans.FirstOrDefault(l => l.Name == "Automotriz");
+                    if (loan3 != null)
+                    {
+                        var clientLoan3 = new ClientLoan
+                        {
+                            Amount = 100000,
+                            ClientId = client1.Id,
+                            LoanId = loan3.Id,
+                            Payments = "24"
+                        };
+                        context.ClientLoans.Add(clientLoan3);
+                    }
+                    var loan4 = context.Loans.FirstOrDefault(l => l.Name == "Prestario");
+                    if (loan4 != null)
+                    {
+                        var clientLoan4 = new ClientLoan
+                        {
+                            Amount = 180000,
+                            ClientId = client1.Id,
+                            LoanId = loan4.Id,
+                            Payments = "24"
+                        };
+                        context.ClientLoans.Add(clientLoan4);
+                    }
+                    context.SaveChanges();
+                }
+            }
+
+            //Metodo que actualiza el balance de la cuenta
             ModifyAccBalance(context);
         }
         public static void ModifyAccBalance(HomeBankingContext context)
         {
             foreach (Transactions transactions in context.Transactions.ToList())
             {
-                var account = context.Account.FirstOrDefault(c => c.Id == transactions.AccountId);
+                var account = context.Account.FirstOrDefault(ac => ac.Id == transactions.AccountId);
                 account.SetBalance(transactions.Amount);
             }
             context.SaveChanges();
