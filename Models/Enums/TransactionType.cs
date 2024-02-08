@@ -1,4 +1,4 @@
-﻿namespace HomeBankingMindHub.Models
+﻿namespace HomeBankingMinHub.Models.Enums
 {
     public enum TransactionType
     {

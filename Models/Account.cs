@@ -11,7 +11,6 @@ namespace HomeBankingMinHub.Models
         public Client Client { get; set; }
         public long ClientId { get; set; }
         public ICollection<Transactions> Transactions { get; set; }
-
         public void SetBalance (double TransactionAmount)
         {
             Balance += TransactionAmount;

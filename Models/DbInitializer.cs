@@ -1,4 +1,4 @@
-﻿using HomeBankingMindHub.Models;
+﻿using HomeBankingMinHub.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -52,6 +52,43 @@ namespace HomeBankingMinHub.Models
                         new Transactions { AccountId= account1.Id, Amount = -3000, Date= DateTime.Now.AddHours(-7), Description = "Compra en tienda xxxx", Type = TransactionType.DEBIT.ToString() },
                     };
                     context.Transactions.AddRange(transactions);
+                    context.SaveChanges();
+                }
+            }
+            if (!context.Cards.Any())
+            {
+                var client1 = context.Clients.FirstOrDefault(c => c.Email == "lrodriguez@gmail.com");
+                if (client1 != null)
+                {
+                    var cards = new Card[]
+                    {
+                        new Card
+                        {
+                            ClientId = client1.Id,
+                            CardHolder = client1.FirstName + " " + client1.LastName,
+                            Type = CardType.DEBIT.ToString(),
+                            Color = CardColor.GOLD.ToString(),
+                            Number = "3325-6745-7876-4445",
+                            Cvv = 990,
+                            FromDate = DateTime.Now,
+                            ThruDate = DateTime.Now.AddYears(4),
+                        },
+                        new Card
+                        {
+                            ClientId = client1.Id,
+                            CardHolder = client1.FirstName + " " + client1.LastName,
+                            Type = CardType.CREDIT.ToString(),
+                            Color = CardColor.TITANIUM.ToString(),
+                            Number = "2234-6745-552-7888",
+                            Cvv = 750,
+                            FromDate = DateTime.Now,
+                            ThruDate = DateTime.Now.AddYears(5),
+                        },
+                    };
+                    foreach (Card card in cards)
+                    {
+                        context.Cards.Add(card);
+                    }
                     context.SaveChanges();
                 }
             }
