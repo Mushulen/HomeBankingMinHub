@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HomeBankingMinHub.Migrations
 {
     [DbContext(typeof(HomeBankingContext))]
-    [Migration("20240207120437_AddLoanEntity")]
-    partial class AddLoanEntity
+    [Migration("20240208160428_AddClientLoanEntity")]
+    partial class AddClientLoanEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,45 @@ namespace HomeBankingMinHub.Migrations
                     b.HasIndex("ClientId");
 
                     b.ToTable("Account");
+                });
+
+            modelBuilder.Entity("HomeBankingMinHub.Models.Card", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardHolder")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ClientId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Color")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cvv")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FromDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ThruDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("HomeBankingMinHub.Models.Client", b =>
@@ -148,8 +187,8 @@ namespace HomeBankingMinHub.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -167,6 +206,15 @@ namespace HomeBankingMinHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("HomeBankingMinHub.Models.Card", b =>
+                {
+                    b.HasOne("HomeBankingMinHub.Models.Client", null)
+                        .WithMany("Cards")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("HomeBankingMinHub.Models.ClientLoan", b =>
@@ -191,7 +239,7 @@ namespace HomeBankingMinHub.Migrations
             modelBuilder.Entity("HomeBankingMinHub.Models.Transactions", b =>
                 {
                     b.HasOne("HomeBankingMinHub.Models.Account", null)
-                        .WithMany("Transaction")
+                        .WithMany("Transactions")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -199,12 +247,14 @@ namespace HomeBankingMinHub.Migrations
 
             modelBuilder.Entity("HomeBankingMinHub.Models.Account", b =>
                 {
-                    b.Navigation("Transaction");
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("HomeBankingMinHub.Models.Client", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("Cards");
 
                     b.Navigation("ClientLoans");
                 });
