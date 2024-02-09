@@ -25,7 +25,6 @@ namespace HomeBankingMinHub.Controllers
         }
 
         [HttpGet]
-
         public IActionResult Get()
         {
             try
@@ -60,29 +59,24 @@ namespace HomeBankingMinHub.Controllers
                         {
                             Id = c.Id,
                             CardHolder = c.CardHolder,
-                            Color = c.Color,
+                            Color = c.Color.ToString(),
+                            Type = c.Type.ToString(),
                             Cvv = c.Cvv,
                             FromDate = c.FromDate,
                             Number = c.Number,
                             ThruDate = c.ThruDate,
-                            Type = c.Type
                         }).ToList()
                     };
 
                     clientsDTO.Add(newClientDTO);
-
                 }
-
                 return Ok(clientsDTO);
-
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
         }
-
         [HttpPost]
 
         public IActionResult Post([FromBody] NewClientDTO newClient)
@@ -114,7 +108,6 @@ namespace HomeBankingMinHub.Controllers
         }
 
         [HttpGet("{id}")]
-
         public IActionResult Get(long id)
         {
             try
@@ -125,7 +118,6 @@ namespace HomeBankingMinHub.Controllers
                     return Forbid();
                 }
                 var clientDTO = new ClientDTO
-
                 {
                     Id = client.Id,
                     Email = client.Email,
@@ -150,19 +142,16 @@ namespace HomeBankingMinHub.Controllers
                     {
                         Id = c.Id,
                         CardHolder = c.CardHolder,
-                        Color = c.Color,
+                        Color = c.Color.ToString(),
+                        Type = c.Type.ToString(),
                         Cvv = c.Cvv,
                         FromDate = c.FromDate,
                         Number = c.Number,
                         ThruDate = c.ThruDate,
-                        Type = c.Type
                     }).ToList()
                 };
-
                 return Ok(clientDTO);
-
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
