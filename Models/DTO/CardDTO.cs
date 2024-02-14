@@ -1,9 +1,13 @@
-﻿using System;
+﻿using HomeBankingMinHub.Models;
+using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace HomeBankingMinHub.Models.DTO
 {
     public class CardDTO
     {
+        [JsonIgnore]
         public long Id { get; set; }
         public string CardHolder { get; set; }
         public string Type { get; set; }

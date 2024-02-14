@@ -18,6 +18,7 @@ builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.Re
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository,AccountRepository>();
+builder.Services.AddScoped<ICardRepository,CardRepository>();
 
 //Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

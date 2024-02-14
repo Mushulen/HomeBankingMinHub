@@ -18,8 +18,13 @@ namespace HomeBankingMinHub.Repositories
         }
         public IEnumerable<Card> GetAllCards()
         {
-            return FindAll().
-                    ToList();
+            return FindAll()
+                   .ToList();
+        }
+        public IEnumerable<Card> GetCardsByClient(long clientId)
+        {
+            return FindByCondition(cards => cards.ClientId == clientId)
+                   .ToList();
         }
         public void Save(Card card)
         {

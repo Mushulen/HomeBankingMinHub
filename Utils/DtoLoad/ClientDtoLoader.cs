@@ -1,11 +1,11 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
 
-namespace HomeBankingMinHub.Utils.ClientDtoLoad
+namespace HomeBankingMinHub.Utils.DtoLoad
 {
     public class ClientDtoLoader
     {
-        public static ClientDTO CurrentClient (Client currentclient)
+        public static ClientDTO CurrentClient(Client currentclient)
         {
             var CurrentClient = new ClientDTO
             {

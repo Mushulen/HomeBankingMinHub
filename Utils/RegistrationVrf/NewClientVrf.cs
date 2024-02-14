@@ -14,12 +14,13 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
         public string ErrorMessage = string.Empty;
         private string specialChars = @"[^a-zA-Z]";
         private IClientRepository _clientrepository = clientRepository;
+
         public string NewClientDataVrf(NewClientDTO NewClient)
         {
             if (string.IsNullOrEmpty(NewClient.FirstName) || Regex.IsMatch(NewClient.FirstName, specialChars)) { ErrorMessage += " Nombre Inválido"; }
             if (string.IsNullOrEmpty(NewClient.LastName) || Regex.IsMatch(NewClient.LastName, specialChars)) { ErrorMessage += " Apellido Inválido"; }
             if (string.IsNullOrEmpty(NewClient.Email)) { ErrorMessage += " Email Inválido"; }
-            if (!AlreadyExistingEmail(NewClient.Email, _clientrepository)) { ErrorMessage += " Email ya existente"; }
+            if (!AlreadyExistingEmail(NewClient.Email)) { ErrorMessage += " Email ya existente"; }
             if (string.IsNullOrEmpty(NewClient.Password)) { ErrorMessage += " Contraseña Inválida"; }
             return ErrorMessage;
         }
@@ -34,7 +35,7 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
             };
             return (newClient);
         }
-        private bool AlreadyExistingEmail(string Email, IClientRepository clientRepository)
+        private bool AlreadyExistingEmail(string Email)
         {
             var clients = _clientrepository.GetAllClients(); 
             foreach (var client in clients)

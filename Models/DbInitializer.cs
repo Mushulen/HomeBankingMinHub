@@ -1,6 +1,8 @@
 ﻿using HomeBankingMinHub.Models.Enums;
+using HomeBankingMinHub.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Net;
 
 namespace HomeBankingMinHub.Models
 {
@@ -12,11 +14,11 @@ namespace HomeBankingMinHub.Models
             {
                 var clients = new Client[]
                 {
-                    new Client {FirstName="Leandro", LastName="Rodriguez", Email = "lrodriguez@gmail.com", Password="qwerty"},
+                    new Client {FirstName="Leandro", LastName="Rodriguez", Email = "lrodriguez@gmail.com", Password=PasswordManagement.EncryptPassword("qwerty")},
 
-                    new Client {FirstName="Lautaro", LastName="Lucci", Email = "llucci@gmail.com", Password="asdfg"},
+                    new Client {FirstName="Lautaro", LastName="Lucci", Email = "llucci@gmail.com", Password=PasswordManagement.EncryptPassword("asdfgh")},
 
-                    new Client {FirstName="Gimena", LastName="Dali", Email = "gdali@gmail.com", Password="qzxcvb"}
+                    new Client {FirstName="Gimena", LastName="Dali", Email = "gdali@gmail.com", Password=PasswordManagement.EncryptPassword("zxcvbn")}
                 };
                 context.Clients.AddRange(clients);
                 context.SaveChanges();
@@ -161,18 +163,6 @@ namespace HomeBankingMinHub.Models
                     context.SaveChanges();
                 }
             }
-
-            //Metodo que actualiza el balance de la cuenta
-            ModifyAccBalance(context);
-        }
-        public static void ModifyAccBalance(HomeBankingContext context)
-        {
-            foreach (Transactions transactions in context.Transactions.ToList())
-            {
-                var account = context.Account.FirstOrDefault(ac => ac.Id == transactions.AccountId);
-                account.SetBalance(transactions.Amount);
-            }
-            context.SaveChanges();
         }
     }
 }
