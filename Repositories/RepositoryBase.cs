@@ -4,7 +4,6 @@ using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
 using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Repositories.Interface;
 
 namespace HomeBankingMinHub.Repositories

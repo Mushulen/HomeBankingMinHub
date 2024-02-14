@@ -20,6 +20,15 @@ namespace HomeBankingMinHub.Repositories
                    .ThenInclude(cl => cl.Loan)
                    .FirstOrDefault();
         }
+        public Client FindByEmail(string email)
+        {
+            return FindByCondition(client => client.Email.ToUpper() == email.ToUpper())
+                    .Include(client => client.Accounts)
+                    .Include(client => client.Cards)
+                    .Include(client => client.ClientLoans)
+                    .ThenInclude(cl => cl.Loan)
+                    .FirstOrDefault();
+        }
         public IEnumerable<Client> GetAllClients()
         {
             return FindAll()
