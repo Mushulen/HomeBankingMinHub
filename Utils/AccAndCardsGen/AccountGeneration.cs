@@ -11,13 +11,13 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
         public static Account NewAccountGeneration (Client currentClient)
         {
             Random random = new Random();
-            string accletters = new string (currentClient.FirstName.Take(3).ToArray());
+            string accLetters = new string (currentClient.FirstName.Take(3).ToArray());
             string randomNumbers = new string(Enumerable.Range(0, 10).Select(_ => random.Next(10).ToString()[0]).ToArray());
 
             var account = new Account()
             {
                 ClientId = currentClient.Id,
-                Number = accletters.ToUpper() + "-" + randomNumbers,
+                Number = accLetters.ToUpper() + "-" + randomNumbers,
                 CreationDate = DateTime.Now,
                 Balance = 0,
             };
