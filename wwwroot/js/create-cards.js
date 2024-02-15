@@ -35,13 +35,13 @@ var app = new Vue({
                     this.errorMsg = error.response.data;  
                     this.errorToats.show();
                 }) */
-                axios.post('/api/client/current/cards',{
+                axios.post('api/client/current/cards',{
                     type: this.cardType,
                     color: this.cardColor,
                 })
                     .then(() => { window.location.href = "/cards.html" })
                     .catch(() => {
-                        this.errorMsg = "Upload failed, check the information"
+                        this.errorMsg = "Sign up failed, check the information"
                         this.errorToats.show();
                     })
             }

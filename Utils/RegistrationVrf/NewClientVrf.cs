@@ -12,9 +12,10 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
     public class NewClientVrf (IClientRepository clientRepository)
     {
         public string ErrorMessage = string.Empty;
-        private string specialChars = @"[^a-zA-Z]";
+        private string specialChars = @"[^a-zA-Z]"; //Coleccion de caracteres Regex que solo acepta letras de la a-z minuscula y A-Z mayusculas.
         private IClientRepository _clientrepository = clientRepository;
 
+        //Verificacion de los campos del cliente nuevo.
         public string NewClientDataVrf(NewClientDTO NewClient)
         {
             if (string.IsNullOrEmpty(NewClient.FirstName) || Regex.IsMatch(NewClient.FirstName, specialChars)) { ErrorMessage += " Nombre Inválido"; }
@@ -24,6 +25,8 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
             if (string.IsNullOrEmpty(NewClient.Password)) { ErrorMessage += " Contraseña Inválida"; }
             return ErrorMessage;
         }
+
+        //Creacion del nuevo cliente.
         public Client NewVrfClientDto(NewClientDTO newclient)
         {
             var newClient = new Client
@@ -35,6 +38,8 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
             };
             return (newClient);
         }
+
+        //Verificacion si el email ya esta registrado.
         private bool AlreadyExistingEmail(string Email)
         {
             var clients = _clientrepository.GetAllClients(); 

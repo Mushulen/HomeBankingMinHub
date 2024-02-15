@@ -4,7 +4,7 @@ namespace HomeBankingMinHub.Models.DTO
 {
     public class NewCardDTO
     {
-        public CardType cardType { get; set; }
-        public CardColor cardColor { get; set; }
+        public string Type { get; set; }
+        public string Color { get; set; }
     }
 }

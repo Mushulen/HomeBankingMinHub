@@ -6,6 +6,7 @@ namespace HomeBankingMinHub.Utils
 {
     public class PasswordManagement
     {
+        //Encriptacion de la contraseña.
         public static string EncryptPassword(string password)
         {
             using (SHA256 sha256 = SHA256.Create())

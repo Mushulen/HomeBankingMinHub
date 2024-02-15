@@ -11,6 +11,8 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
     {
         public static Card NewCardGeneration(Client currentClient, NewCardDTO newCard)
         {
+
+            //Generador de numeros aleatorios para la tarjeta.
             Random random = new Random();
             string randomNumbers = new string(Enumerable.Range(0, 16).Select(_ => random.Next(10).ToString()[0]).ToArray());
             int randomCvv = random.Next(100, 1000);
@@ -19,8 +21,8 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
             {
                 ClientId = currentClient.Id,
                 CardHolder = currentClient.FirstName + " " + currentClient.LastName,
-                Type = newCard.cardType,
-                Color = newCard.cardColor,
+                Type = (CardType)Enum.Parse(typeof(CardType), newCard.Type),
+                Color = (CardColor)Enum.Parse(typeof(CardColor), newCard.Color),
                 Number = InsertDashes(randomNumbers,4),
                 Cvv = randomCvv,
                 FromDate = DateTime.Now,
@@ -28,6 +30,8 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
             };
             return account;
         }
+
+        //Funcion para poner un "-" cada 4 digitos en el numero de la tarjeta.
         private static string InsertDashes(string randomNumbers, int interval)
         {
             string result = "";
