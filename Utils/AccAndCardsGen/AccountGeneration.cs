@@ -12,7 +12,7 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
         {
             Random random = new Random();
             string accLetters = new string (currentClient.FirstName.Take(3).ToArray());
-            string randomNumbers = new string(Enumerable.Range(0, 10).Select(_ => random.Next(10).ToString()[0]).ToArray());
+            string randomNumbers = new string(Enumerable.Range(0, 8).Select(_ => random.Next(10).ToString()[0]).ToArray());
 
             var account = new Account()
             {
