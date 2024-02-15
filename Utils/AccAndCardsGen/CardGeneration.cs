@@ -11,23 +11,27 @@ namespace HomeBankingMinHub.Utils.AccAndCardsGen
     {
         public static Card NewCardGeneration(Client currentClient, NewCardDTO newCard)
         {
+
+            //Generador de numeros aleatorios para las tarjetas.
             Random random = new Random();
             string randomNumbers = new string(Enumerable.Range(0, 16).Select(_ => random.Next(10).ToString()[0]).ToArray());
             int randomCvv = random.Next(100, 1000);
 
-            var account = new Card
+            var card = new Card
             {
                 ClientId = currentClient.Id,
                 CardHolder = currentClient.FirstName + " " + currentClient.LastName,
-                Type = newCard.cardType,
-                Color = newCard.cardColor,
+                Type = (CardType)Enum.Parse(typeof(CardType),newCard.Type),
+                Color = (CardColor)Enum.Parse(typeof(CardColor), newCard.Color),
                 Number = InsertDashes(randomNumbers,4),
                 Cvv = randomCvv,
                 FromDate = DateTime.Now,
                 ThruDate = DateTime.Now.AddYears(4),
             };
-            return account;
+            return card;
         }
+
+        //Funcion que le inserta los "-" a el numero aleatorio generado.
         private static string InsertDashes(string randomNumbers, int interval)
         {
             string result = "";

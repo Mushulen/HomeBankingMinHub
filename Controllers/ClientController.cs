@@ -177,12 +177,11 @@ namespace HomeBankingMinHub.Controllers
             try
             {
                 Client client = _clientRepository.FindByEmail(email);
-                NewCardDTO newcard = newCard;
                 var cards = _cardRepository.GetCardsByClient(client.Id);
 
                 if (cards.Count() >= 3)
                 {
-                    return StatusCode(400, "No puede tener mas de 3 tarjetas.");
+                    return StatusCode(403, "No puede tener mas de 3 tarjetas.");
                 }
 
                 Card newGeneratedCard = CardGeneration.NewCardGeneration(client,newCard);
