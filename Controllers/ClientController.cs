@@ -179,10 +179,8 @@ namespace HomeBankingMinHub.Controllers
                 Client client = _clientRepository.FindByEmail(email);
                 var cards = _cardRepository.GetCardsByClient(client.Id);
 
-                if (cards.Count() >= 3)
-                {
-                    return StatusCode(403, "No puede tener mas de 3 tarjetas.");
-                }
+                //Verificacion de que el cliente no tenga mas de 3 tarjetas de un tipo, o si ya posee una tarjeta del mismo color de la que esta intentando crear.
+                if (!CardCreationVrf.CardsVerification(cards, newCard).IsNullOrEmpty()) { return StatusCode(400, CardCreationVrf.CardsVerification(cards, newCard)); }
 
                 Card newGeneratedCard = CardGeneration.NewCardGeneration(client,newCard);
                 _cardRepository.Save(newGeneratedCard);
