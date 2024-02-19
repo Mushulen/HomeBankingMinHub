@@ -5,9 +5,9 @@ namespace HomeBankingMinHub.Repositories.Interface
 {
     public interface ICardRepository
     {
-        void Save(Card card);
-        Card FindById(long id);
-        IEnumerable<Card> GetCardsByClient(long clientId);
         IEnumerable<Card> GetAllCards();
+        IEnumerable<Card> GetCardsByClient(long clientId);
+        Card FindById(long id);
+        void Save(Card card);
     }
 }

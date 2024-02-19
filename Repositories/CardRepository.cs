@@ -11,11 +11,6 @@ namespace HomeBankingMinHub.Repositories
         public CardRepository(HomeBankingContext repositoryContext) : base(repositoryContext)
         {
         }
-        public Card FindById(long id)
-        {
-            return FindByCondition(card => card.Id == id)
-                   .FirstOrDefault();
-        }
         public IEnumerable<Card> GetAllCards()
         {
             return FindAll()
@@ -25,6 +20,11 @@ namespace HomeBankingMinHub.Repositories
         {
             return FindByCondition(cards => cards.ClientId == clientId)
                    .ToList();
+        }
+        public Card FindById(long id)
+        {
+            return FindByCondition(card => card.Id == id)
+                   .FirstOrDefault();
         }
         public void Save(Card card)
         {

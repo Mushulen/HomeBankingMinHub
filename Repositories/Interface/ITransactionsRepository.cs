@@ -5,8 +5,9 @@ namespace HomeBankingMinHub.Repositories.Interface
 {
     public interface ITransactionsRepository
     {
-        void Save(Transactions transaction);
-        Transactions FindById(long id);
         IEnumerable<Transactions> GetAllTransactions();
+        Transactions FindById(long id);
+        Transactions FindByNumber(long id);
+        void Save(Transactions transaction);
     }
 }

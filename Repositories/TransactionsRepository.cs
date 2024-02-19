@@ -12,15 +12,19 @@ namespace HomeBankingMinHub.Repositories
         public TransactionsRepository(HomeBankingContext repositoryContext) : base(repositoryContext)
         {
         }
-        public Transactions FindById(long id)
-        {
-            return FindByCondition(transaction => transaction.Id == id)
-                   .FirstOrDefault();
-        }
         public IEnumerable<Transactions> GetAllTransactions()
         {
             return FindAll()
-                   .ToList();
+            .ToList();
+        }
+        public Transactions FindById(long id)
+        {
+            return FindByCondition(transaction => transaction.Id == id)
+            .FirstOrDefault();
+        }
+        public Transactions FindByNumber(long id)
+        {
+            return FindByCondition(transaction => transaction.Id == id).FirstOrDefault();
         }
         public void Save(Transactions transaction)
         {

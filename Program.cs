@@ -19,6 +19,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository,AccountRepository>();
 builder.Services.AddScoped<ICardRepository,CardRepository>();
+builder.Services.AddScoped<ITransactionsRepository,TransactionsRepository>();
 
 //Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
