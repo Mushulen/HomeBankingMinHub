@@ -122,7 +122,7 @@ namespace HomeBankingMinHub.Controllers
                 NewClientDTO newclient = newClient;
                 NewClientVrf newClientData = new NewClientVrf(_clientRepository);
 
-                if (!newClientData.NewClientDataVrf(newClient).IsNullOrEmpty()) return StatusCode(400, newClientData.ErrorMessage);
+                if (!newClientData.NewClientDataVrf(newClient).IsNullOrEmpty()) return StatusCode(403, newClientData.ErrorMessage);
 
                 _clientRepository.Save(newClientData.NewVrfClientDto(newclient));
 
