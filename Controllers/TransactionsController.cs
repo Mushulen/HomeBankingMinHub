@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Principal;
 using HomeBankingMinHub.Models.Enums;
+using HomeBankingMinHub.Utils;
 
 namespace HomeBankingMinHub.Controllers
 {
@@ -46,90 +47,27 @@ namespace HomeBankingMinHub.Controllers
                     return Forbid("Usted no ha iniciado sesion");
                 }
 
-                Client client = _clientRepository.FindByEmail(email);
+                var fromAccount = _accountsRepository.FindByNumber(newtransactionDTO.FromAccountNumber);
+                var toAccount = _accountsRepository.FindByNumber(newtransactionDTO.ToAccountNumber);
 
-                if (client == null)
-                {
-                    return Forbid("No existe el cliente");
-                }
+                //Validacion de los campos ingresados en el front.
+                if (TransactionVerify.NewTransactionFieldValidation(newtransactionDTO, _accountsRepository) != string.Empty) return StatusCode(403, TransactionVerify.NewTransactionFieldValidation(newtransactionDTO, _accountsRepository));
 
-                if (newtransactionDTO.FromAccountNumber == string.Empty || newtransactionDTO.ToAccountNumber == string.Empty)
-                {
-                    return Forbid("Cuenta de origen o cuenta de destino no proporcionada.");
-                }
+                //Creacion de las transacciones para ambas cuentas.
+                _transactionsRepository.Save(TransactionVerify.NewTrasactionFromAccount(newtransactionDTO, _accountsRepository, newtransactionDTO.ToAccountNumber));
+                _transactionsRepository.Save(TransactionVerify.NewTransactionToAccount(newtransactionDTO, _accountsRepository, newtransactionDTO.FromAccountNumber));
 
-                if (newtransactionDTO.FromAccountNumber == newtransactionDTO.ToAccountNumber)
-                {
-                    return Forbid("No se permite la transferencia a la misma cuenta.");
-                }
+                //Actualizacion del balance de las cuentas utilizadas
+                _accountsRepository.Save(TransactionVerify.BalanceUpdate(fromAccount, newtransactionDTO.Amount * -1));
+                _accountsRepository.Save(TransactionVerify.BalanceUpdate(toAccount, newtransactionDTO.Amount));
 
-                if (newtransactionDTO.Amount == 0 || newtransactionDTO.Description == string.Empty)
-                {
-                    return Forbid("Monto o descripcion no proporcionados.");
-                }
-
-                //buscamos las cuentas
-                Account fromAccount = _accountsRepository.FinByNumber(newtransactionDTO.FromAccountNumber);
-                if (fromAccount == null)
-                {
-                    return Forbid("Cuenta de origen no existe");
-                }
-
-                //controlamos el monto
-                if (fromAccount.Balance < newtransactionDTO.Amount)
-                {
-                    return Forbid("Fondos insuficientes");
-                }
-
-                //buscamos la cuenta de destino
-                Account toAccount = _accountsRepository.FinByNumber(newtransactionDTO.ToAccountNumber);
-                if (toAccount == null)
-                {
-                    return Forbid("Cuenta de destino no existe");
-                }
-
-                //demas logica para guardado
-                //comenzamos con la inserrción de las 2 transacciones realizadas
-                //desde toAccount se debe generar un debito por lo tanto lo multiplicamos por -1
-                _transactionsRepository.Save(new Transactions
-                {
-                    Type = TransactionType.DEBIT,
-                    Amount = newtransactionDTO.Amount * -1,
-                    Description = newtransactionDTO.Description + " " + toAccount.Number,
-                    AccountId = fromAccount.Id,
-                    Date = DateTime.Now,
-                });
-
-                //ahora una credito para la cuenta fromAccount
-                _transactionsRepository.Save(new Transactions
-                {
-                    Type = TransactionType.CREDIT,
-                    Amount = newtransactionDTO.Amount,
-                    Description = newtransactionDTO.Description + " " + fromAccount.Number,
-                    AccountId = toAccount.Id,
-                    Date = DateTime.Now,
-                });
-
-                //seteamos los valores de las cuentas, a la ccuenta de origen le restamos el monto
-                fromAccount.Balance = fromAccount.Balance - newtransactionDTO.Amount;
-                //actualizamos la cuenta de origen
-                _accountsRepository.Save(fromAccount);
-
-                //a la cuenta de destino le sumamos el monto
-                toAccount.Balance = toAccount.Balance + newtransactionDTO.Amount;
-                //actualizamos la cuenta de destino
-                _accountsRepository.Save(toAccount);
-
-
-                return Created("Transferencia realizada", fromAccount);
+                return Created("Transferencia realizada", _accountsRepository.FindByNumber(newtransactionDTO.FromAccountNumber));
 
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
-
             }
-
         }
     }
 }

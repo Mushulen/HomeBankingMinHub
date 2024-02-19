@@ -8,7 +8,7 @@ namespace HomeBankingMinHub.Repositories.Interface
         IEnumerable<Account> GetAllAccounts();
         IEnumerable<Account> GetAccountsByClient(long clientId);
         Account FindById(long id);
-        Account FinByNumber(string number);
+        Account FindByNumber(string number);
         void Save(Account account);
     }
 }
