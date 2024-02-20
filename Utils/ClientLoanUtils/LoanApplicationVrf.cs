@@ -15,6 +15,7 @@ namespace HomeBankingMinHub.Utils.ClientLoanVrf
         public Client verifiedClient = client;
         public string LoanApplicationDataVrf()
         {
+            //Verificacion de campos del prestamo.
             Client toClient = clientRepository.FindById(account.ClientId);
             if (loan == null) { ErrorMessage = "El prestamo no existe"; }
             else if (loanApplicationDTO.Amount <= 0 || loanApplicationDTO.Amount > loan.MaxAmount) { ErrorMessage = "La cantidad requerida es incorrecta"; }
@@ -25,6 +26,7 @@ namespace HomeBankingMinHub.Utils.ClientLoanVrf
 
         public ClientLoan ClientLoanVerifiedGeneration()
         {
+            //Creacion del prestamo.
             ClientLoan newClientLoan = new ClientLoan
             {
                 Amount = loanApplicationDTO.Amount * 1.2,
@@ -37,6 +39,7 @@ namespace HomeBankingMinHub.Utils.ClientLoanVrf
         }
         public Transactions LoanTransactionGeneration()
         {
+            //Creacion de la transaccion del prestamo.
             Transactions newTransaction = new Transactions
             {
                 Type = TransactionType.CREDIT,

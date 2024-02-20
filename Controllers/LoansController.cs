@@ -61,12 +61,14 @@ namespace HomeBankingMinHub.Controllers
                 Client client = _clientRepository.FindByEmail(email);
                 LoanApplicationVrf loanApplicationData = new LoanApplicationVrf(loanApplicationDTO, client, _loanRepository, _accountsRepository, _clientRepository);
 
+                //Verificacion de los campos del prestamo.
                 if (loanApplicationData.LoanApplicationDataVrf() != string.Empty) { return StatusCode(403, loanApplicationData.ErrorMessage); }
 
-                var toAccount = _accountsRepository.FindByNumber(loanApplicationDTO.ToAccountNumber);
-
+                //Creacion del prestamo, la transaccion, y la actualizacion del balance nuevo en la cuenta destino.
                 _clientLoanRepository.Save(loanApplicationData.ClientLoanVerifiedGeneration());
                 _transactionsRepository.Save(loanApplicationData.LoanTransactionGeneration());
+
+                var toAccount = _accountsRepository.FindByNumber(loanApplicationDTO.ToAccountNumber);
                 _accountsRepository.Save(TransactionVerify.BalanceUpdate(toAccount, loanApplicationDTO.Amount));
 
                 return Created("Prestamo Aplicado", _loanRepository.FindById(loanApplicationDTO.LoanId));
