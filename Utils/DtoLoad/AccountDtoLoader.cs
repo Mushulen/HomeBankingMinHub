@@ -32,5 +32,24 @@ namespace HomeBankingMinHub.Utils.DtoLoad
             }
             return accountsDTO;
         }
+        public static AccountDTO CurrentClientAccountById (Account account)
+        {
+            var accountDTO = new AccountDTO
+            {
+                Id = account.Id,
+                Number = account.Number,
+                CreationDate = account.CreationDate,
+                Balance = account.Balance,
+                Transactions = account.Transactions.Select(tr => new TransactionsDTO
+                {
+                    Id = tr.Id,
+                    Type = tr.Type.ToString(),
+                    Amount = tr.Amount,
+                    Description = tr.Description,
+                    Date = tr.Date,
+                }).ToList()
+            };
+            return accountDTO;
+        }
     }
 }

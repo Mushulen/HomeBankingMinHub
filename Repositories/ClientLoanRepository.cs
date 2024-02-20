@@ -12,14 +12,9 @@ namespace HomeBankingMinHub.Repositories
         public ClientLoanRepository(HomeBankingContext repositoryContext) : base(repositoryContext)
         {
         }
-        public ClientLoan FindById(long id)
+        public void Save(ClientLoan clientLoan)
         {
-            return FindByCondition(loan => loan.Id == id)
-                    .FirstOrDefault();
-        }
-        public void Save(ClientLoan clientloan)
-        {
-            Create(clientloan);
+            Create(clientLoan);
             SaveChanges();
         }
     }

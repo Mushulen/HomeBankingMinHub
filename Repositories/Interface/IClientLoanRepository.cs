@@ -4,7 +4,6 @@ namespace HomeBankingMinHub.Repositories.Interface
 {
     public interface IClientLoanRepository
     {
-        ClientLoan FindById(long id);
-        void Save(ClientLoan loan);
+        void Save(ClientLoan clientLoan);
     }
 }

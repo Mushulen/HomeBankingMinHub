@@ -7,7 +7,6 @@ namespace HomeBankingMinHub.Models.DTO
 {
     public class ClientLoanDTO
     {
-        [JsonIgnore]
         public long Id { get; set; }
         public double Amount { get; set; }
         public string Payments { get; set; }
