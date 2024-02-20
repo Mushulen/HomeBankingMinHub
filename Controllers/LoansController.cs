@@ -65,10 +65,10 @@ namespace HomeBankingMinHub.Controllers
                 if (loanApplicationData.LoanApplicationDataVrf() != string.Empty) { return StatusCode(403, loanApplicationData.ErrorMessage); }
 
                 //Creacion del prestamo, la transaccion, y la actualizacion del balance nuevo en la cuenta destino.
+                var toAccount = _accountsRepository.FindByNumber(loanApplicationDTO.ToAccountNumber);
+
                 _clientLoanRepository.Save(loanApplicationData.ClientLoanVerifiedGeneration());
                 _transactionsRepository.Save(loanApplicationData.LoanTransactionGeneration());
-
-                var toAccount = _accountsRepository.FindByNumber(loanApplicationDTO.ToAccountNumber);
                 _accountsRepository.Save(TransactionVerify.BalanceUpdate(toAccount, loanApplicationDTO.Amount));
 
                 return Created("Prestamo Aplicado", _loanRepository.FindById(loanApplicationDTO.LoanId));
