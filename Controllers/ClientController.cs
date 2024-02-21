@@ -39,6 +39,26 @@ namespace HomeBankingMinHub.Controllers
             _cardRepository = cardRepository;
         }
 
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                var clients = _clientRepository.GetAllClients();
+                var clientsDTO = new List<ClientDTO>();
+
+                foreach (Client client in clients)
+                {
+                    clientsDTO.Add(ClientDtoLoader.CurrentClient(client));
+                }
+                return Ok(clientsDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("current")]
         public IActionResult GetCurrent()
         {
