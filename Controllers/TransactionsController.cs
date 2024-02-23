@@ -1,23 +1,7 @@
-﻿using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Models.DTO;
-using HomeBankingMinHub.Utils.DtoLoad;
-using HomeBankingMinHub.Repositories.Interface;
-using HomeBankingMinHub.Utils.RegistrationVrf;
-using Microsoft.AspNetCore.Http;
+﻿using HomeBankingMinHub.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using HomeBankingMinHub.Repositories;
-using System.Net;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using HomeBankingMinHub.Utils.AccAndCardsGen;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
-using HomeBankingMinHub.Models.Enums;
 using HomeBankingMinHub.Utils;
+using HomeBankingMinHub.Services;
 
 namespace HomeBankingMinHub.Controllers
 {
@@ -25,15 +9,13 @@ namespace HomeBankingMinHub.Controllers
     [ApiController]
     public class TransactionsController : ControllerBase
     {
-        private IClientRepository _clientRepository;
-        private IAccountRepository _accountsRepository;
-        private ITransactionsRepository _transactionsRepository;
+        private IAccountService _accountService;
+        private ITransactionService _transactionService;
 
-        public TransactionsController(IClientRepository clientRepository, IAccountRepository accountsRepository, ITransactionsRepository transactionsRepository)
+        public TransactionsController(IAccountService accountService, ITransactionService transactionService)
         {
-            _clientRepository = clientRepository;
-            _accountsRepository = accountsRepository;
-            _transactionsRepository = transactionsRepository;
+            _accountService = accountService;
+            _transactionService = transactionService;
         }
 
         [HttpPost]
@@ -47,21 +29,14 @@ namespace HomeBankingMinHub.Controllers
                     return Forbid("Usted no ha iniciado sesion");
                 }
 
-                var fromAccount = _accountsRepository.FindByNumber(newtransactionDTO.FromAccountNumber);
-                var toAccount = _accountsRepository.FindByNumber(newtransactionDTO.ToAccountNumber);
+                TransactionVerify TransactionDataVerify = new TransactionVerify();
 
                 //Validacion de los campos ingresados en el front.
-                if (TransactionVerify.NewTransactionFieldValidation(newtransactionDTO, _accountsRepository) != string.Empty) return StatusCode(403, TransactionVerify.NewTransactionFieldValidation(newtransactionDTO, _accountsRepository));
+                if (TransactionDataVerify.NewTransactionFieldValidation(newtransactionDTO, _accountService) != string.Empty) return StatusCode(403, TransactionDataVerify.ErrorMessage);
 
-                //Creacion de las transacciones para ambas cuentas.
-                _transactionsRepository.Save(TransactionVerify.NewTrasactionFromAccount(newtransactionDTO, _accountsRepository, newtransactionDTO.ToAccountNumber));
-                _transactionsRepository.Save(TransactionVerify.NewTransactionToAccount(newtransactionDTO, _accountsRepository, newtransactionDTO.FromAccountNumber));
+                _transactionService.createNewTransaction(newtransactionDTO);
 
-                //Actualizacion del balance de las cuentas utilizadas
-                _accountsRepository.Save(TransactionVerify.BalanceUpdate(fromAccount, newtransactionDTO.Amount * -1));
-                _accountsRepository.Save(TransactionVerify.BalanceUpdate(toAccount, newtransactionDTO.Amount));
-
-                return Created("Transferencia realizada", _accountsRepository.FindByNumber(newtransactionDTO.FromAccountNumber));
+                return Created("Transferencia realizada", _accountService.getByNumber(newtransactionDTO.FromAccountNumber));
 
             }
             catch (Exception ex)

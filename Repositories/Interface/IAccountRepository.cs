@@ -1,5 +1,4 @@
 ﻿using HomeBankingMinHub.Models;
-using System.Collections.Generic;
 
 namespace HomeBankingMinHub.Repositories.Interface
 {

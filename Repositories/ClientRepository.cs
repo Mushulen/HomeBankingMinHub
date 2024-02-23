@@ -1,8 +1,6 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace HomeBankingMinHub.Repositories
 {
@@ -15,6 +13,7 @@ namespace HomeBankingMinHub.Repositories
         {
             return FindAll()
                    .Include(client => client.Accounts)
+                   .ThenInclude(tr => tr.Transactions)
                    .Include(client => client.Cards)
                    .Include(client => client.ClientLoans)
                    .ThenInclude(cl => cl.Loan)
@@ -24,6 +23,7 @@ namespace HomeBankingMinHub.Repositories
         {
             return FindByCondition(client => client.Id == id)
                    .Include(client => client.Accounts)
+                   .ThenInclude(tr => tr.Transactions)
                    .Include(client => client.Cards)
                    .Include(client => client.ClientLoans)
                    .ThenInclude(cl => cl.Loan)
@@ -33,6 +33,7 @@ namespace HomeBankingMinHub.Repositories
         {
             return FindByCondition(client => client.Email.ToUpper() == email.ToUpper())
                     .Include(client => client.Accounts)
+                    .ThenInclude(tr => tr.Transactions)
                     .Include(client => client.Cards)
                     .Include(client => client.ClientLoans)
                     .ThenInclude(cl => cl.Loan)

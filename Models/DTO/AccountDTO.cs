@@ -1,9 +1,4 @@
-﻿using HomeBankingMinHub.Models;
-using System.Collections.Generic;
-using System;
-using System.Text.Json.Serialization;
-
-namespace HomeBankingMinHub.Models.DTO
+﻿namespace HomeBankingMinHub.Models.DTO
 
 {
     public class AccountDTO
@@ -13,5 +8,14 @@ namespace HomeBankingMinHub.Models.DTO
         public DateTime CreationDate { get; set; }
         public double Balance { get; set; }
         public ICollection<TransactionsDTO> Transactions { get; set; }
+
+        public AccountDTO(Account account)
+        {
+            Id = account.Id;
+            Number = account.Number;
+            CreationDate = account.CreationDate;
+            Balance = account.Balance;
+            Transactions = account.Transactions.Select(tr => new TransactionsDTO(tr)).ToList();
+        }
     }
 }

@@ -1,13 +1,7 @@
-﻿using HomeBankingMinHub.Repositories;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Numerics;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using System;
 using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Repositories.Interface;

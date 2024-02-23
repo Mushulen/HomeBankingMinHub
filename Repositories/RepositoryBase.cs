@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
-using System.Linq;
-using System;
 using Microsoft.EntityFrameworkCore;
 using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Repositories.Interface;

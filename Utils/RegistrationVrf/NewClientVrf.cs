@@ -1,33 +1,28 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
-using HomeBankingMinHub.Repositories.Interface;
-using Microsoft.Extensions.FileSystemGlobbing.Internal;
-using System.Drawing.Text;
-using System.Linq;
-using System.Net;
+using HomeBankingMinHub.Services;
 using System.Text.RegularExpressions;
 
 namespace HomeBankingMinHub.Utils.RegistrationVrf
 {
-    public class NewClientVrf (IClientRepository clientRepository)
+    public class NewClientVrf (IClientService clientService)
     {
         public string ErrorMessage = string.Empty;
-        private string specialChars = @"[^a-zA-Z]"; //Coleccion de caracteres Regex que solo acepta letras de la a-z minuscula y A-Z mayusculas.
-        private IClientRepository _clientrepository = clientRepository;
+        private string specialChars = @"[^a-zA-Z]"; //Regular expresion que excluye de la a-z minuscula y mayuscula.
 
         //Verificacion de los campos del cliente nuevo.
         public string NewClientDataVrf(NewClientDTO NewClient)
         {
-            if (string.IsNullOrEmpty(NewClient.FirstName) || Regex.IsMatch(NewClient.FirstName, specialChars)) { ErrorMessage += " Nombre Inválido"; }
-            if (string.IsNullOrEmpty(NewClient.LastName) || Regex.IsMatch(NewClient.LastName, specialChars)) { ErrorMessage += " Apellido Inválido"; }
-            if (string.IsNullOrEmpty(NewClient.Email)) { ErrorMessage += " Email Inválido"; }
-            if (!AlreadyExistingEmail(NewClient.Email)) { ErrorMessage += " Email ya existente"; }
-            if (string.IsNullOrEmpty(NewClient.Password)) { ErrorMessage += " Contraseña Inválida"; }
+            if (string.IsNullOrEmpty(NewClient.FirstName) || Regex.IsMatch(NewClient.FirstName, specialChars)) { ErrorMessage = "Nombre Inválido"; }
+            else if (string.IsNullOrEmpty(NewClient.LastName) || Regex.IsMatch(NewClient.LastName, specialChars)) { ErrorMessage = "Apellido Inválido"; }
+            else if (string.IsNullOrEmpty(NewClient.Email)) { ErrorMessage = "Email Inválido"; }
+            else if (!AlreadyExistingEmail(NewClient.Email)) { ErrorMessage = "Email ya existente"; }
+            else if (string.IsNullOrEmpty(NewClient.Password)) { ErrorMessage = "Contraseña Inválida"; }
             return ErrorMessage;
         }
 
         //Creacion del nuevo cliente.
-        public Client NewVrfClientDto(NewClientDTO newclient)
+        public static Client NewVrfClientDto(NewClientDTO newclient)
         {
             var newClient = new Client
             {
@@ -42,7 +37,7 @@ namespace HomeBankingMinHub.Utils.RegistrationVrf
         //Verificacion si el email ya esta registrado.
         private bool AlreadyExistingEmail(string Email)
         {
-            var clients = _clientrepository.GetAllClients(); 
+            var clients = clientService.getAllClients(); 
             foreach (var client in clients)
             {
                 if (client.Email == Email) return false;

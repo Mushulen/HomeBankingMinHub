@@ -1,9 +1,5 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-
 
 namespace HomeBankingMinHub.Repositories
 {

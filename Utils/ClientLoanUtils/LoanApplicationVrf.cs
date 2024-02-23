@@ -1,22 +1,20 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Models.Enums;
-using HomeBankingMinHub.Repositories;
-using HomeBankingMinHub.Repositories.Interface;
-using Microsoft.Identity.Client;
+using HomeBankingMinHub.Services;
 
 namespace HomeBankingMinHub.Utils.ClientLoanVrf
 {
-    public class LoanApplicationVrf (LoanApplicationDTO loanApplicationDTO, Client client, ILoanRepository loanRepository, IAccountRepository accountRepository, IClientRepository clientRepository)
+    public class LoanApplicationVrf (LoanApplicationDTO loanApplicationDTO, ClientDTO client, ILoanService loanService, IAccountService accountService, IClientService clientService)
     {
         public string ErrorMessage = string.Empty;
-        public Loan loan = loanRepository.FindById(loanApplicationDTO.LoanId);
-        public Account account = accountRepository.FindByNumber(loanApplicationDTO.ToAccountNumber);
-        public Client verifiedClient = client;
+        public Loan loan = loanService.getById(loanApplicationDTO.LoanId);
+        public Account account = accountService.getByNumber(loanApplicationDTO.ToAccountNumber);
+        public ClientDTO verifiedClient = client;
         public string LoanApplicationDataVrf()
         {
             //Verificacion de campos del prestamo.
-            Client toClient = clientRepository.FindById(account.ClientId);
+            ClientDTO toClient = clientService.getClientById(account.ClientId);
             if (loan == null) { ErrorMessage = "El prestamo no existe"; }
             else if (loanApplicationDTO.Amount <= 0 || loanApplicationDTO.Amount > loan.MaxAmount) { ErrorMessage = "La cantidad requerida es incorrecta"; }
             else if (loanApplicationDTO.Payments == null || !loan.Payments.Contains(loanApplicationDTO.Payments)) { ErrorMessage = "Las cuotas requeridas son invalidas"; }

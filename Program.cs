@@ -1,10 +1,11 @@
 using HomeBankingMinHub.Repositories;
 using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Controllers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using HomeBankingMinHub.Repositories.Interface;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using HomeBankingMinHub.Services;
+using HomeBankingMinHub.Services.Impl;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,14 @@ builder.Services.AddDbContext<HomeBankingContext>(options =>options.UseSqlServer
 // Add Controllers
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+//Add Services
+builder.Services.AddScoped<IClientService,ClientService>();
+builder.Services.AddScoped<IAccountService,AccountService>();
+builder.Services.AddScoped<ICardService,CardService>();
+builder.Services.AddScoped<ITransactionService,TransactionService>();
+builder.Services.AddScoped<ILoanService,LoanService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IClientRepository,ClientRepository>();
 builder.Services.AddScoped<IAccountRepository,AccountRepository>();
@@ -40,20 +49,20 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.Initialize(context);
 }
 
-// Configure the HTTP request pipeline.
+//Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
+//Permite usar los archivos del root
 app.UseStaticFiles();
-
 app.UseDefaultFiles();
 
 app.UseRouting();
 
+//Indica que la applicacion tendra autenticacion.
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

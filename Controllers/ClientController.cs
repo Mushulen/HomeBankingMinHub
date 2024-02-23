@@ -1,21 +1,9 @@
-﻿using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Models.DTO;
-using HomeBankingMinHub.Utils.DtoLoad;
-using HomeBankingMinHub.Repositories.Interface;
+﻿using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Utils.RegistrationVrf;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using HomeBankingMinHub.Repositories;
-using System.Net;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using HomeBankingMinHub.Utils.AccAndCardsGen;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Principal;
+using HomeBankingMinHub.Services;
 
 namespace HomeBankingMinHub.Controllers
 
@@ -26,19 +14,43 @@ namespace HomeBankingMinHub.Controllers
 
     public class ClientController : ControllerBase
     {
-        private IClientRepository _clientRepository;
+        private IClientService _clientService;
+        private IAccountService _accountService;
+        private ICardService _cardService;
 
-        private IAccountRepository _accountsRepository;
-
-        private ICardRepository _cardRepository;
-
-        public ClientController(IClientRepository clientRepository, IAccountRepository accountsRepository, ICardRepository cardRepository)
+        public ClientController(IClientService clientService, IAccountService accountsService, ICardService cardService)
         {
-            _clientRepository = clientRepository;
-            _accountsRepository = accountsRepository;
-            _cardRepository = cardRepository;
+            _clientService = clientService;
+            _accountService = accountsService;
+            _cardService = cardService;
         }
 
+        [HttpGet]
+        public IActionResult Get()
+        {
+            try
+            {
+                return Ok(_clientService.getAllClients());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(long id)
+        {
+            try
+            {
+                return Ok(_clientService.getClientById(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+   
         [HttpGet("current")]
         public IActionResult GetCurrent()
         {
@@ -47,18 +59,9 @@ namespace HomeBankingMinHub.Controllers
                 string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
                 if (email == string.Empty)
                 {
-                    return Forbid();
+                    return Forbid("Usted no ha iniciado sesion");
                 }
-
-                Client client = _clientRepository.FindByEmail(email);
-
-                if (client.Accounts.Count() == 0)
-                {
-                    Account newAccount = AccountGeneration.NewAccountGeneration(client);
-                    _accountsRepository.Save(newAccount);
-                }
-                ClientDTO clientDTO = ClientDtoLoader.CurrentClient(client);
-                return Ok(clientDTO);
+                return Ok(_clientService.getClientByEmail(email));
             }
             catch (Exception ex)
             {
@@ -69,21 +72,15 @@ namespace HomeBankingMinHub.Controllers
         [HttpGet("current/accounts")]
         public IActionResult GetCurrentAccounts()
         {
-
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            if (email == string.Empty)
-            {
-                return Forbid();
-            }
-
-            Client client = _clientRepository.FindByEmail(email);
-
             try
             {
-                var accounts = _accountsRepository.GetAccountsByClient(client.Id);
-                return Ok(AccountDtoLoader.CurrentClientAccounts(accounts));
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
+                {
+                    return Forbid("Usted no ha iniciado sesion");
+                }
+                return Ok(_accountService.getAccountsByClientId(_clientService.getClientByEmail(email).Id));
             }
-
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
@@ -93,19 +90,14 @@ namespace HomeBankingMinHub.Controllers
         [HttpGet("current/cards")]
         public IActionResult GetCurrentcards()
         {
-
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            if (email == string.Empty)
-            {
-                return Forbid();
-            }
-
-            Client client = _clientRepository.FindByEmail(email);
-
             try
             {
-                var cards = _cardRepository.GetCardsByClient(client.Id);
-                return Ok(CardDtoLoader.CurrentClientCards(cards));
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
+                {
+                    return Forbid("Usted no ha iniciado sesion");
+                }
+                return Ok(_cardService.getCardsByClientId(_clientService.getClientByEmail(email).Id));
             }
 
             catch (Exception ex)
@@ -119,14 +111,14 @@ namespace HomeBankingMinHub.Controllers
         {
             try
             {
-                NewClientDTO newclient = newClient;
-                NewClientVrf newClientData = new NewClientVrf(_clientRepository);
+                NewClientVrf newClientData = new NewClientVrf(_clientService);
 
-                if (!newClientData.NewClientDataVrf(newClient).IsNullOrEmpty()) return StatusCode(403, newClientData.ErrorMessage);
+                //Validacion de los campos ingresados en el front.
+                if (!newClientData.NewClientDataVrf(newClient).IsNullOrEmpty()) return StatusCode(400, newClientData.ErrorMessage);
 
-                _clientRepository.Save(newClientData.NewVrfClientDto(newclient));
+                _clientService.createNewClient(newClient);
 
-                return Created("Creado con exito", newclient);
+                return Created("Creado con exito", newClient);
             }
 
             catch (Exception ex)
@@ -138,24 +130,17 @@ namespace HomeBankingMinHub.Controllers
         [HttpPost("current/accounts")]
         public IActionResult Post()
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            if (email == string.Empty)
-            {
-                return Forbid();
-            }
             try
             {
-                Client client = _clientRepository.FindByEmail(email);
-                var accounts = _accountsRepository.GetAccountsByClient(client.Id);
-
-                if (accounts.Count() >= 3)
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
                 {
-                    return StatusCode(400, "No puede tener mas de 3 cuentas.");
+                    return Forbid("Usted no ha iniciado sesion");
                 }
 
-                Account newAccount = AccountGeneration.NewAccountGeneration(client);
-                _accountsRepository.Save(newAccount);
-                return Created("Creado con exito", newAccount);
+                if (!_accountService.createNewAccount(email).IsNullOrEmpty()) return StatusCode(500, "Ha ocurrido un error");
+                
+                return Created("Creado con exito", _accountService.getAccountsByClientId(_clientService.getClientByEmail(email).Id).LastOrDefault());
             }
             catch (Exception ex)
             {
@@ -166,22 +151,22 @@ namespace HomeBankingMinHub.Controllers
         [HttpPost("current/cards")]
         public IActionResult Post([FromBody] NewCardDTO newCard)
         {
-            string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
-            if (email == string.Empty)
-            {
-                return Forbid();
-            }
             try
             {
-                Client client = _clientRepository.FindByEmail(email);
-                var cards = _cardRepository.GetCardsByClient(client.Id);
+                string email = User.FindFirst("Client") != null ? User.FindFirst("Client").Value : string.Empty;
+                if (email == string.Empty)
+                {
+                    return Forbid("Usted no ha iniciado sesion");
+                }
 
-                //Verificacion de que el cliente no tenga mas de 3 tarjetas de un tipo, o si ya posee una tarjeta del mismo color de la que esta intentando crear.
-                if (!CardCreationVrf.CardsVerification(cards, newCard).IsNullOrEmpty()) return StatusCode(400, CardCreationVrf.CardsVerification(cards, newCard));
+                CardCreationVrf newVerifiedCard = new CardCreationVrf();
 
-                Card newGeneratedCard = CardGeneration.NewCardGeneration(client, newCard);
-                _cardRepository.Save(newGeneratedCard);
-                return Created("Creado con exito", newGeneratedCard);
+                //Validacion de los campos ingresados en el front.
+                if (!newVerifiedCard.CardsVerification(_cardService.getCardsByClientId(_clientService.getClientByEmail(email).Id), newCard).IsNullOrEmpty()) return StatusCode(400, newVerifiedCard.ErrorMessage);
+
+                _cardService.createNewCard(_clientService.getClientByEmail(email),newCard);
+
+                return Created("Creado con exito", _cardService.getCardsByClientId(_clientService.getClientByEmail(email).Id).LastOrDefault());
             }
             catch (Exception ex)
             {

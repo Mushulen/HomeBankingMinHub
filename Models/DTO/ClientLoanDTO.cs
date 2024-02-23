@@ -1,9 +1,4 @@
-﻿using HomeBankingMinHub.Models;
-using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-
-namespace HomeBankingMinHub.Models.DTO
+﻿namespace HomeBankingMinHub.Models.DTO
 {
     public class ClientLoanDTO
     {
@@ -13,5 +8,14 @@ namespace HomeBankingMinHub.Models.DTO
         public long ClientId { get; set; }
         public long LoanId { get; set; }
         public string Name { get; set; }
+
+        public ClientLoanDTO(ClientLoan clientLoan)
+        {
+            Id = clientLoan.Id;
+            LoanId = clientLoan.LoanId;
+            Name = clientLoan.Loan.Name;
+            Amount = clientLoan.Amount;
+            Payments = clientLoan.Payments;
+        }
     }
 }

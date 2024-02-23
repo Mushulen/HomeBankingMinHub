@@ -1,13 +1,5 @@
-﻿using HomeBankingMinHub.Models;
-using HomeBankingMinHub.Models.DTO;
-using HomeBankingMinHub.Repositories.Interface;
-using HomeBankingMinHub.Utils.DtoLoad;
-using Microsoft.AspNetCore.Http;
+﻿using HomeBankingMinHub.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace HomeBankingMinHub.Controllers
 {
@@ -15,10 +7,10 @@ namespace HomeBankingMinHub.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
-        private IAccountRepository _accountsRepository;
-        public AccountsController(IAccountRepository accountsRepository)
+        private IAccountService _accountService;
+        public AccountsController(IAccountService accountService)
         {
-            _accountsRepository = accountsRepository;
+            _accountService = accountService;
         }
 
         [HttpGet]
@@ -26,8 +18,7 @@ namespace HomeBankingMinHub.Controllers
         {
             try
             {
-                var accounts = _accountsRepository.GetAllAccounts();
-                return Ok(AccountDtoLoader.CurrentClientAccounts(accounts));
+                return Ok(_accountService.getAllAccounts());
             }
             catch (Exception ex)
             {
@@ -39,12 +30,7 @@ namespace HomeBankingMinHub.Controllers
         {
             try
             {
-                var account = _accountsRepository.FindById(id);
-                if (account == null)
-                {
-                    return Forbid();
-                }
-                return Ok(AccountDtoLoader.CurrentClientAccountById(account));
+                return Ok(_accountService.getAccountById(id));
             }
             catch (Exception ex)
             {

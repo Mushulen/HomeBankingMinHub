@@ -16,5 +16,17 @@ namespace HomeBankingMinHub.Models.DTO
         public int Cvv { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ThruDate { get; set; }
+
+        public CardDTO(Card card)
+        {
+            Id = card.Id;
+            CardHolder = card.CardHolder;
+            Color = card.Color.ToString();
+            Type = card.Type.ToString();
+            Cvv = card.Cvv;
+            FromDate = card.FromDate;
+            Number = card.Number;
+            ThruDate = card.ThruDate;
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Microsoft.Build.ObjectModelRemoting;
-
-namespace HomeBankingMinHub.Models.DTO
+﻿namespace HomeBankingMinHub.Models.DTO
 {
     public class LoanApplicationDTO
     {

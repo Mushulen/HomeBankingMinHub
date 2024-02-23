@@ -1,15 +1,12 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Models.Enums;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HomeBankingMinHub.Utils.AccAndCardsGen
 {
     public class CardGeneration
     {
-        public static Card NewCardGeneration(Client currentClient, NewCardDTO newCard)
+        public static Card NewCardGeneration(ClientDTO currentClient, NewCardDTO newCard)
         {
 
             //Generador de numeros aleatorios para la tarjeta.

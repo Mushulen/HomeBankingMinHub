@@ -1,6 +1,4 @@
-﻿using HomeBankingMinHub.Models.Enums;
-
-namespace HomeBankingMinHub.Models.DTO
+﻿namespace HomeBankingMinHub.Models.DTO
 {
     public class NewCardDTO
     {

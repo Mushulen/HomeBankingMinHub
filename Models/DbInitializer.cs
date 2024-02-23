@@ -1,8 +1,5 @@
 ﻿using HomeBankingMinHub.Models.Enums;
 using HomeBankingMinHub.Utils;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net;
 
 namespace HomeBankingMinHub.Models
 {

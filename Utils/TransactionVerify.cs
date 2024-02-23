@@ -1,29 +1,28 @@
 ﻿using HomeBankingMinHub.Models;
 using HomeBankingMinHub.Models.DTO;
 using HomeBankingMinHub.Models.Enums;
-using HomeBankingMinHub.Repositories;
 using HomeBankingMinHub.Repositories.Interface;
+using HomeBankingMinHub.Services;
 
 namespace HomeBankingMinHub.Utils
 {
     public class TransactionVerify
     {
-        public static string NewTransactionFieldValidation (NewTransactionsDTO newTransaction, IAccountRepository accountRepository)
+        public string ErrorMessage = string.Empty;
+        public string NewTransactionFieldValidation (NewTransactionsDTO newTransaction, IAccountService accountService)
         {
-            string ErrorMessage = string.Empty;
-
             //Validacion de los campos.
             if (newTransaction.FromAccountNumber == string.Empty || newTransaction.ToAccountNumber == string.Empty)
             {
                 ErrorMessage = "Cuenta de origen o cuenta de destino no proporcionada.";
             }
 
-            else if (accountRepository.FindByNumber(newTransaction.ToAccountNumber) == null)
+            else if (accountService.getByNumber(newTransaction.ToAccountNumber) == null)
             {
                 ErrorMessage = "La cuenta de destino no existe.";
             }
 
-            else if (accountRepository.FindByNumber(newTransaction.FromAccountNumber) == null)
+            else if (accountService.getByNumber(newTransaction.FromAccountNumber) == null)
             {
                 ErrorMessage = "La cuenta de origen no existe.";
             }
@@ -38,7 +37,7 @@ namespace HomeBankingMinHub.Utils
                 ErrorMessage = "No se permite la transferencia a la misma cuenta.";
             }
 
-            else if (accountRepository.FindByNumber(newTransaction.FromAccountNumber).Balance < newTransaction.Amount)
+            else if (accountService.getByNumber(newTransaction.FromAccountNumber).Balance < newTransaction.Amount)
             {
                 ErrorMessage = "Fondos insuficientes";
             }
